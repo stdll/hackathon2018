@@ -1,14 +1,16 @@
-package de.msg.gbg.hackacthon18.service;
+package de.msg.gbg.hackathon18.navigalypse.service;
 
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
-import com.google.maps.errors.ApiException;
 import com.google.maps.model.*;
+import de.msg.gbg.hackathon18.navigalypse.service.NavigationServices;
 import org.joda.time.ReadableInstant;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 
-
+@Component
 public class NavigationServicesImp implements NavigationServices {
 
 
