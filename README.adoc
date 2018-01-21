@@ -1,0 +1,11 @@
+= GB G Hackathon 2018
+
+msg GB G Hackathon 2018
+
+== Verwendte Datenquellen und Bibliotheken
+* https://www.dwd.de/DE/leistungen/met_verfahren_mosmix/met_verfahren_mosmix.html[DWD Open Data - MOSMIX]
+* https://github.com/googlemaps/google-maps-services-java[Java Google Maps API]
+
+== Geplante Erweiterungen
+* https://github.com/jdeolive/geodb[GeoDB]
+* https://github.com/mstahv/spring-boot-spatial-example[Spring Boot & Spatial Databases]
