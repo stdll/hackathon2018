@@ -9,3 +9,4 @@ msg GB G Hackathon 2018
 == Geplante Erweiterungen
 * https://github.com/jdeolive/geodb[GeoDB]
 * https://github.com/mstahv/spring-boot-spatial-example[Spring Boot & Spatial Databases]
+* https://nixmash.com/post/using-google-maps-api-with-thymeleaf-and-spring[Google Maps API mit Thymeleaf]
