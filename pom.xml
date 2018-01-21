@@ -81,11 +81,4 @@
 		</plugins>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>artifacts.unidata.ucar.edu</id>
-			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
-		</repository>
-	</repositories>
-
 </project>

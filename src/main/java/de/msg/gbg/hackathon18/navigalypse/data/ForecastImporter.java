@@ -1,24 +1,25 @@
 package de.msg.gbg.hackathon18.navigalypse.data;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.transaction.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import de.msg.gbg.hackathon18.navigalypse.data.jpa.Klassifikation;
 import de.msg.gbg.hackathon18.navigalypse.data.jpa.Ort;
 import de.msg.gbg.hackathon18.navigalypse.data.jpa.OrtRepository;
 import de.msg.gbg.hackathon18.navigalypse.data.jpa.Vorhersage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 @Component
 public class ForecastImporter {
@@ -31,16 +32,24 @@ public class ForecastImporter {
         this.repository = repository;
     }
 
-    //@PostConstruct
-    public void importForecasts() throws Exception {
-        Path path = Paths.get(getClass().getClassLoader().getResource("dwd/o_gmosw_078_1_latest").toURI());
-        LOG.info(path.toString());
+    // @PostConstruct
+    public void importForecasts() throws IOException, URISyntaxException {
+        Stream<String> lines = null;
+        try {
+            Path path =
+                Paths.get(getClass().getClassLoader().getResource("dwd/o_gmosw_078_1_latest").toURI());
 
-        // Skip header
-        Files.lines(path, StandardCharsets.ISO_8859_1).skip(2).forEach(this::readLine);
+            // Skip header
+            lines = Files.lines(path, StandardCharsets.ISO_8859_1);
+            lines.skip(2).forEach(this::readLine);
+        } finally {
+            if (lines != null) {
+                lines.close();
+            }
+        }
     }
 
-    public void readLine(String line) {
+    private void readLine(String line) {
         if (line.length() < 23) {
             LOG.error("Fehler beim Lesen der Zeile {}. Zu kurz: {}", line, line.length());
             return;
@@ -56,9 +65,8 @@ public class ForecastImporter {
                 Integer hoehe = Integer.valueOf(fields[2]);
                 Klassifikation klassifikation = Klassifikation.lese(fields[4]);
 
-                Ort aktuellerOrt =
-                    new Ort(identifikation[0], identifikation[2], longitude, latitude, hoehe, klassifikation,
-                        fields[5]);
+                Ort aktuellerOrt = new Ort(identifikation[0], identifikation[2], longitude, latitude, hoehe,
+                    klassifikation, fields[5]);
                 repository.save(aktuellerOrt);
             } catch (Exception e) {
                 LOG.error("Fehler beim Lesen der Zeile {}. {}: {}", line, e.getClass().getSimpleName(),
@@ -79,9 +87,8 @@ public class ForecastImporter {
                     Double regen = fields[10].equals("---") ? 0 : Double.valueOf(fields[10]) / 10;
                     Double schnee = fields[11].equals("---") ? 0 : regen - Double.valueOf(fields[11]) / 10;
 
-                    Vorhersage vorhersage =
-                        new Vorhersage(fields[0], zeitpunkt, temperatur, windrichtung, windgeschwindigkeit,
-                            regen, schnee);
+                    Vorhersage vorhersage = new Vorhersage(fields[0], zeitpunkt, temperatur, windrichtung,
+                        windgeschwindigkeit, regen, schnee);
 
                     ort.getVorhersagen().add(vorhersage);
                     repository.save(ort);
